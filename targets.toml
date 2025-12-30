@@ -1,0 +1,13 @@
+[neovim]
+src = "~/.config/nvim/"
+dest = "nvim"
+
+[zsh]
+src = "~/.zshrc"
+dest = "zshrc"
+
+[tmux]
+src = "~/.tmux.conf"
+dest = "tmux.conf"
+
+
