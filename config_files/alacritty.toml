@@ -1,6 +1,0 @@
-[font]
-# normal = { family = "Cousine Nerd Font", style="Regular" }
-normal = { family = "JetBRainsMono Nerd Font", style="Regular" }
-
-[window]
-opacity = 1
