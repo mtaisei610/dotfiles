@@ -18,8 +18,21 @@ def expand(path):
 
 
 def ask_overwrite(path):
-    ans = input(f"Overwrite {path}? [y/n]: ").strip().lower()
-    return ans in ("y", "yes")
+    while True:
+        ans = (
+            input(f"Overwrite or backup {path}? [(y)es/(s)kip/(b)ackup]: ")
+            .strip()
+            .lower()
+        )
+        if ans in ("b", "bak", "backup"):
+            return "bak"
+        elif ans in ("y", "yes"):
+            return "yes"
+        elif ans in ("s", "skip"):
+            return "skip"
+        else:
+            print("Please answer y, s, or b.")
+            continue
 
 
 def overwrite(src, dest):
@@ -36,6 +49,21 @@ def overwrite(src, dest):
             shutil.copy(src, dest)
 
 
+def backup(dest):
+    bak = dest + ".bak"
+    if os.path.exists(bak):
+        if os.path.isdir(bak):
+            shutil.rmtree(bak)
+        else:
+            os.remove(bak)
+    print(f"[Bakup] {dest} -> {bak}")
+
+    if os.path.isdir(dest):
+        shutil.copytree(dest, bak)
+    else:
+        shutil.copy2(dest, bak)
+
+
 def collect(config):
     for name, spec in config.items():
         src = expand(spec["src"])
@@ -49,8 +77,11 @@ def collect(config):
         overwrite(src, dest)
 
 
-def install(config):
+def install(config, targets):
     for name, spec in config.items():
+        if targets is not None and name not in targets:
+            continue
+
         src = os.path.join(os.path.dirname(__file__), "dotfiles", spec["dest"])
         dest = expand(spec["src"])
 
@@ -60,18 +91,30 @@ def install(config):
             continue
 
         if os.path.exists(dest):
-            if not ask_overwrite(dest):
-                print(f"[Skip] {name}: {dest}")
-                continue
-            overwrite(src, dest)
+            choice = ask_overwrite(dest)
+            match (choice):
+                case "yes":
+                    overwrite(src, dest)
+                    continue
+                case "skip":
+                    print(f"[Skip] {name}: {dest}")
+                    continue
+                case "bak":
+                    backup(dest)
+                    overwrite(src, dest)
+                    continue
 
 
 def usage():
-    print("Usage: python manager.py [collect|install]")
+    print(
+        "Usage: \n"
+        "  python manager.py collect\n"
+        "  python manager.py install [name ...]\n"
+    )
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         usage()
         sys.exit(1)
 
@@ -82,7 +125,12 @@ def main():
     if cmd == "collect":
         collect(config)
     elif cmd == "install":
-        install(config)
+        targets = sys.argv[2:] or None
+        if targets:
+            for t in targets:
+                if t not in config:
+                    print(f"[Warning] unknown target: {t}")
+        install(config, targets)
     else:
         usage()
         sys.exit(1)
