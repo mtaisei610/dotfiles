@@ -10,13 +10,9 @@ It manages configuration files and directories, and supports:
 - Optional `.bak` backup creation
 - Installing only selected configs
 
----
-
 ## Requirements
 
 - Python `3.11` or higher
-
----
 
 ## Directory Structure
 
@@ -38,8 +34,6 @@ Example:
 - `manager.py` : the main script
 - `targets.toml` : configuration file
 - `dotfiles/` : stored configuration files/directories
-
----
 
 ### Configuration (`targets.toml`)
 
@@ -68,8 +62,6 @@ Notes:
 
 - `~` is automatically expanded to your home directory
 - Each top-level table name (e.g.,, `nvim`, `zsh`) is treated as the target name
-
----
 
 ## Commands
 
@@ -101,8 +93,6 @@ When installing if the destination already exists, you will be asked:
 | `y`   | overwrite immediately              |
 | `s`   | skip this config                   |
 | `b`   | Create a backup before overwriting |
-
----
 
 ## Example Workflow
 
