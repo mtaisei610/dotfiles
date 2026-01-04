@@ -107,3 +107,18 @@ git commit -m "Update dotfiles"
 # 3. On a new environment, restore configs
 python manager.py install
 ```
+
+## My Configuration Files
+
+The `dotfiles/` directory in this repository contains my personal configuration
+files.
+
+To use these configurations, just clone this repository and run the install
+command.
+
+| Software | Description                                                     |
+| -------- | --------------------------------------------------------------- |
+| Neovim   | Customized with LazyVim.                                        |
+| Zsh      | Configured with Oh My Zsh for Beautifl UI and auto-compliation. |
+| Tmux     | Beautiful UI.                                                   |
+| Emacs    | Set up for Common Lisp development using SBCL and SLY.          |

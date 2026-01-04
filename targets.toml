@@ -10,4 +10,10 @@ dest = "zshrc"
 src = "~/.tmux.conf"
 dest = "tmux.conf"
 
+# [lem]
+# src = "~/.lem/init.lisp"
+# dest = "lem-init.lisp"
 
+[emacs]
+src = "~/.emacs.d/init.el"
+dest = "emacs-init.el"
