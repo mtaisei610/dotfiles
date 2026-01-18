@@ -17,3 +17,15 @@ dest = "lem-init.lisp"
 [emacs]
 src = "~/.emacs.d/init.el"
 dest = "emacs-init.el"
+
+[proxy]
+src = "~/proxy.sh"
+dest = "proxy.sh"
+
+[kitty_terminal]
+src = "~/.config/kitty/"
+dest = "kitty"
+
+[sway]
+src = "~/.config/sway/config"
+dest = "sway-config"
