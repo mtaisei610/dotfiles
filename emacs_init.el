@@ -12,7 +12,8 @@
    '("8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f"
      default))
  '(display-line-numbers-width-start t)
- '(package-selected-packages '(evil geiser-gauche monokai-theme rust-mode sly)))
+ '(package-selected-packages
+   '(catppuccin-theme evil geiser-gauche monokai-theme rust-mode sly)))
 
 ;; Smooth Scrolloing
 (if (fboundp 'pixel-scroll-precision-mode)
@@ -27,6 +28,12 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
+
+(use-package catppuccin-theme
+  :ensure t
+  :init
+  (setq catppuccin-flavor 'mocha)
+  (load-theme 'catppuccin :no-confirm))
 
 (use-package evil
   :ensure t
