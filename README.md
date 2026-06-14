@@ -1,11 +1,17 @@
+## Dependency
+
+```bash
+brew install gauche
+```
+
 ## Collect configuration files
 
 ```bash
-bash manage.bash collect
+gosh manage.scm collect
 ```
 
 ## Install configuration files to new environment
 
 ```bash
-bash manage.bash install
+gosh manage.scm install
 ```
