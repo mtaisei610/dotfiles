@@ -11,6 +11,7 @@
     ("tmux.conf"            . ".tmux.conf")
     ("config.fish"          . ".config/fish/config.fish")
     ("foot.ini"             . ".config/foot/foot.ini")
+    ("emacs_init.el"        . ".emacs.d/init.el")
     ("skk_user.dict"        . ".local/share/fcitx5/skk/user.dict")))
 
 
