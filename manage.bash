@@ -55,6 +55,11 @@ _skk_user=(
   "$(dirname "$0")/user.dict"
 )
 
+_sway=(
+  "$HOME/.config/sway/config"
+  "$(dirname "$0")/sway_config"
+)
+
 # ----------------------------------------------
 
 if [ "$arg" == "collect" ]; then
@@ -65,6 +70,7 @@ if [ "$arg" == "collect" ]; then
   copy_collect _fish
   copy_collect _tmux
   copy_collect _nvim
+  copy_collect _sway
   copy_collect _skk_user
   # -------------------
 
@@ -76,6 +82,7 @@ elif [ "$arg" == "install" ]; then
   copy_install _fish
   copy_install _tmux
   copy_install _nvim
+  copy_install _sway
   copy_install _skk_user
   # -------------------
 
