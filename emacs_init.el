@@ -1,5 +1,6 @@
 (global-display-line-numbers-mode t)
 
+(menu-bar-mode -1)
 (setq truncate-lines t)
 
 (custom-set-variables

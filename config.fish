@@ -35,6 +35,7 @@ if status is-interactive
 
     # --- Aliases ---
     alias v='nvim'
+    alias e='emacsclient -t -a ""'
     alias screenshot='grim -g (slurp)'
     alias ls='eza --group-directories-first --color=auto --icons'
     alias ll='eza -lah'
