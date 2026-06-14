@@ -1,7 +1,7 @@
 (global-display-line-numbers-mode t)
 
 (menu-bar-mode -1)
-(setq truncate-lines t)
+(setq-default truncate-lines t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
