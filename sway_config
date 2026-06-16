@@ -47,6 +47,7 @@ bindsym $mod+backslash exec $dropterm
 
 
 exec mako -r 0.5 -c 000000 -a 0.5 -t 2000
+exec fcitx5
 
 ### Output configuration
 #
