@@ -1,16 +1,25 @@
-(global-display-line-numbers-mode t)
-
 (menu-bar-mode -1)
 (setq-default truncate-lines t)
 
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f"
      default))
  '(display-line-numbers-width-start t)
- '(package-selected-packages
-   '(catppuccin-theme centaur-tabs evil geiser-gauche monokai-theme
-		      rust-mode sly)))
+ '(package-selected-packages nil))
+
+
+;; ============================================================
+;; Line Number
+;; ============================================================
+
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'visual)
+
 
 
 ;; ============================================================
@@ -25,6 +34,8 @@
 (setq fast-but-imprecise-scrolling t)
 (setq redisplay-skip-initial-frame t)
 
+(setq select-enable-clipboard t)
+(setq select-enable-primary t)
 
 
 ;; ============================================================
@@ -32,7 +43,10 @@
 ;; ============================================================
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(setq package-archives
+      '(("melpa" . "https://melpa.org/packages/")
+	("nongnu" . "https://elpa.nongnue.org/nongnue/")
+	        ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
 
@@ -54,6 +68,11 @@
 ;; VIM keybind
 ;; ============================================================
 
+(setq evil-undo-system 'undo-redo)
+(setq evil-want-C-u-scroll t)
+(setq evil-search-module 'evil-search)
+(setq evil-ex-search-vim-style-regexp t)
+
 (use-package evil
   :ensure t
   :init
@@ -61,6 +80,19 @@
   (setq evil-want-keybinding nil)
   :config
   (evil-mode 1))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
+(use-package evil-goggles
+  :ensure t
+  :config
+  (evil-goggles-mode)
+  (setq evil-goggles-duration 0.1)
+  (setq evil-goggles-enable-delete nil))
 
 
 
@@ -77,6 +109,21 @@
   (with-eval-after-load 'centaur-tabs
     (evil-define-key 'normal 'global (kbd "H") 'centaur-tabs-backward)
     (evil-define-key 'normal 'global (kbd "L") 'centaur-tabs-forward)))
+
+
+
+;; ============================================================
+;; Tab bar
+;; ============================================================
+
+(use-package doom-modeline
+  :ensure t
+  :init
+  (setq doom-modeline-battery t)
+  (setq doom-modeline-battery-percentage t)
+  (setq doom-modeline-battery-refresh-rate 120)
+  (setq doom-modeline-time t)
+  :hook (after-init . doom-modeline-mode))
 
 
 
@@ -105,6 +152,19 @@
   (setenv "no_proxy" nil)
   (message "Proxy disabled"))
 
+
+;; ============================================================
+;; LaTeX
+;; ============================================================
+
+(use-package tex
+  :ensure auctex
+  :defer t
+  :config
+  (setq-default TeX-engine 'luatex)
+  (setq-default Japanese-TeX-engine 'luatex)
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t))
 
 
 ;; ============================================================
