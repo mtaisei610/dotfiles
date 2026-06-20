@@ -13,8 +13,13 @@
      default))
  '(display-line-numbers-width-start t)
  '(package-selected-packages
-   '(auctex catppuccin-theme centaur-tabs company doom-modeline
-            evil-collection evil-goggles geiser-gauche rust-mode sly)))
+   '(auctex catppuccin-theme centaur-tabs doom-modeline evil-collection
+	    evil-goggles evil-numbers geiser-gauche monokai-theme
+	    rust-mode sly xclip)))
+
+(defun load-config ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
 
 
 ;; ============================================================
@@ -38,8 +43,6 @@
 (setq fast-but-imprecise-scrolling t)
 (setq redisplay-skip-initial-frame t)
 
-(setq select-enable-clipboard t)
-(setq select-enable-primary t)
 
 
 ;; ============================================================
@@ -97,6 +100,35 @@
   (evil-goggles-mode)
   (setq evil-goggles-duration 0.1)
   (setq evil-goggles-enable-delete nil))
+
+(use-package evil-numbers
+  :ensure t
+  :after evil
+  :bind
+  (:map evil-normal-state-map
+	("C-a" . evil-numbers/inc-at-pt)
+	("C-x" . evil-numbers/dec-at-pt))
+  (:map evil-visual-state-map
+	("C-a" . evil-numbers/inc-at-pt)
+	("C-x" . evil-numbers/dec-at-pt)
+	("C-c C-a" . evil-numbers/inc-at-pt-incremental)
+	("C-c C-x" . evil-numbers/dec-at-pt-incremental)))
+
+
+
+
+;; ============================================================
+;; Clipboard
+;; ============================================================
+
+(setq select-enable-clipboard t)
+(setq select-enable-primary nil)
+
+(use-package xclip
+  :ensure t
+  :config
+  (setq xclip-method 'wl-copy)
+  (xclip-mode 1))
 
 
 
