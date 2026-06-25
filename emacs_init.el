@@ -1,6 +1,8 @@
 (menu-bar-mode -1)
 (setq-default truncate-lines t)
 
+(setq make-backup-files nil)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -10,7 +12,9 @@
    '("8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f"
      default))
  '(display-line-numbers-width-start t)
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(auctex catppuccin-theme centaur-tabs company doom-modeline
+            evil-collection evil-goggles geiser-gauche rust-mode sly)))
 
 
 ;; ============================================================
@@ -171,9 +175,20 @@
 ;; LSP
 ;; ============================================================
 
+(use-package cc-mode
+  :ensure nil
+  :config
+  (setq-default c-basic-offset 4
+		tab-width 4
+		indent-tabs-mode nil)
+  (add-hook 'c-mode-common-hook
+            (lambda () (c-set-style "linux"))))
+
 (use-package eglot
   :ensure t
-  :hook ((c-mode c++-mode python-mode rust-mode) . eglot-ensure))
+  :hook ((c-mode c++-mode python-mode rust-mode) . eglot-ensure)
+  :config
+  (add-hook 'before-save-hook 'eglot-format-buffer nil t))
 
 ;; Rust
 (use-package rust-mode
@@ -199,3 +214,19 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+
+;; ============================================================
+;; Auto Complete
+;; ============================================================
+
+(use-package company
+  :ensure t
+  :init
+  (global-company-mode t)
+  :config
+  (setq company-idle-delay 0.0
+	company-minimum-prefix-length 1
+	company-selection-wrap-around t))
