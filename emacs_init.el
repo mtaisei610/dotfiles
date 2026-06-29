@@ -240,6 +240,20 @@
   ;; Gauche
   (setq geiser-gauche-binary "gosh"))
 
+;; Markdown
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" . gfm-mode)
+  :config
+  (setq markdown-hide-markup t)
+  (setq markdown-display-inline-images t))
+
+(use-package valign
+  :ensure t
+  :hook ((markdown-mode . valign-mode)
+         (gfm-mode . valign-mode))
+  :config (setq valign-fancy-bar t))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
