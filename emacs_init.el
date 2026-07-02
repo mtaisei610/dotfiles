@@ -131,6 +131,7 @@
 
 (use-package centaur-tabs
   :ensure t
+  :defer nil
   :config
   (centaur-tabs-mode 1))
 
@@ -157,7 +158,7 @@
 
 
 ;; ============================================================
-;; Tab bar
+;; moodline
 ;; ============================================================
 
 (use-package doom-modeline
