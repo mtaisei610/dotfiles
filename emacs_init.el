@@ -1,3 +1,10 @@
+(setq gc-cons-threshold (* 100 1024 1024))
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 800 1024))))
+
+
+
 (menu-bar-mode -1)
 (setq-default truncate-lines t)
 
@@ -13,13 +20,26 @@
      default))
  '(display-line-numbers-width-start t)
  '(package-selected-packages
-   '(auctex catppuccin-theme centaur-tabs doom-modeline evil-collection
-	    evil-goggles evil-numbers geiser-gauche monokai-theme
-	    rust-mode sly xclip)))
+   '(auctex catppuccin-theme centaur-tabs company corfu doom-modeline
+            evil-collection evil-goggles geiser-gauche markdown-mode
+            pet rust-mode sly valign vterm)))
 
-(defun load-config ()
-  (interactive)
-  (load-file "~/.emacs.d/init.el"))
+
+;; ============================================================
+;; GUI
+;; ============================================================
+
+(defun my/gui-setup (frame)
+  (with-selected-frame frame
+    (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :height 120)
+    (set-fontset-font nil 'japanese-jisx0208
+		      (font-spec :family "Noto Sans CJK JP"))
+    (scroll-bar-mode -1)
+    (tool-bar-mode -1)))
+
+(add-hook 'after-make-frame-functions 'my/gui-setup)
+    
+
 
 
 ;; ============================================================
@@ -43,6 +63,8 @@
 (setq fast-but-imprecise-scrolling t)
 (setq redisplay-skip-initial-frame t)
 
+(setq select-enable-clipboard t)
+(setq select-enable-primary t)
 
 
 ;; ============================================================
@@ -56,6 +78,11 @@
 	        ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
+(setq use-package-always-defer t)
+
+(when (fboundp 'native-compile-async)
+  (setq native-comp-async-report-warnings-errors nil)
+  (setq comp-deferred-compilation t))
 
 
 
@@ -82,6 +109,7 @@
 
 (use-package evil
   :ensure t
+  :defer nil
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -91,44 +119,17 @@
 (use-package evil-collection
   :after evil
   :ensure t
+  :defer nil
   :config
   (evil-collection-init))
 
 (use-package evil-goggles
   :ensure t
+  :defer nil
   :config
   (evil-goggles-mode)
   (setq evil-goggles-duration 0.1)
   (setq evil-goggles-enable-delete nil))
-
-(use-package evil-numbers
-  :ensure t
-  :after evil
-  :bind
-  (:map evil-normal-state-map
-	("C-a" . evil-numbers/inc-at-pt)
-	("C-x" . evil-numbers/dec-at-pt))
-  (:map evil-visual-state-map
-	("C-a" . evil-numbers/inc-at-pt)
-	("C-x" . evil-numbers/dec-at-pt)
-	("C-c C-a" . evil-numbers/inc-at-pt-incremental)
-	("C-c C-x" . evil-numbers/dec-at-pt-incremental)))
-
-
-
-
-;; ============================================================
-;; Clipboard
-;; ============================================================
-
-(setq select-enable-clipboard t)
-(setq select-enable-primary nil)
-
-(use-package xclip
-  :ensure t
-  :config
-  (setq xclip-method 'wl-copy)
-  (xclip-mode 1))
 
 
 
@@ -145,6 +146,21 @@
   (with-eval-after-load 'centaur-tabs
     (evil-define-key 'normal 'global (kbd "H") 'centaur-tabs-backward)
     (evil-define-key 'normal 'global (kbd "L") 'centaur-tabs-forward)))
+
+
+
+;; ============================================================
+;; Terminal
+;; ============================================================
+
+(use-package vterm
+  :ensure t
+  :bind (("C-c v" . vterm))
+  :hook (vterm-mode . (lambda () (display-line-numbers-mode -1)))
+  :config
+  (setq explicit-shell-file-name "fish")
+  (setq vterm-shell "fish")
+  (setq vterm-max-scrollback 10000))
 
 
 
@@ -207,6 +223,29 @@
 ;; LSP
 ;; ============================================================
 
+(use-package eglot
+  :ensure t
+  :hook ((c-mode c++-mode python-mode rust-mode) . eglot-ensure)
+  :config
+  (add-hook 'before-save-hook 'eglot-format-buffer nil t)
+  (add-to-list 'eglot-server-programs
+               '(python-mode . (lambda (interactive)
+                                 (let ((py-path (pet-executable-find "python"))
+                                       (venv-path (pet-virtualenv-root)))
+                                   (when venv-path
+                                     (setenv "CONDA_PREFIX" venv-path)
+                                     (setenv "VIRTUAL_ENV" venv-path))
+                                   '("basedpyright-langserver" "--stdio")))))
+  (setq-default eglot-workspace-configuration
+                '((:basedpyright . (:analysis (:reportMissingTypeStubs "none"))))))
+
+
+
+;; ============================================================
+;; Languages
+;; ============================================================
+
+;; C
 (use-package cc-mode
   :ensure nil
   :config
@@ -216,11 +255,20 @@
   (add-hook 'c-mode-common-hook
             (lambda () (c-set-style "linux"))))
 
-(use-package eglot
+
+;; Python
+(use-package python
   :ensure t
-  :hook ((c-mode c++-mode python-mode rust-mode) . eglot-ensure)
+  :hook (python-mode . eglot-ensure))
+
+(use-package pet
+  :ensure t
   :config
-  (add-hook 'before-save-hook 'eglot-format-buffer nil t))
+  (add-hook 'python-mode-hook 'pet-mode)
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (setq-local python-shell-interpreter (pet-executable-find "python")
+                          python-shell-interpreter-args "-i"))))
 
 ;; Rust
 (use-package rust-mode
@@ -268,11 +316,11 @@
 ;; Auto Complete
 ;; ============================================================
 
-(use-package company
+(use-package corfu
   :ensure t
   :init
-  (global-company-mode t)
+  (global-corfu-mode)
   :config
-  (setq company-idle-delay 0.0
-	company-minimum-prefix-length 1
-	company-selection-wrap-around t))
+  (setq corfu-auto t
+        corfu-auto-delay 0.1
+        corfu-auto-prefix 1))
