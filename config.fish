@@ -24,7 +24,6 @@ if status is-interactive
 
     # --- Path Management ---
     fish_add_path /home/mt/.cargo/bin
-    fish_add_path /home/mt/.config/emacs/bin
     fish_add_path /home/mt/.develop/flutter/bin
     fish_add_path /home/mt/.develop/android-studio/bin
     fish_add_path /home/mt/.local/bin

@@ -1,43 +1,37 @@
+;; -*- lexical-binding: t; -*-
 (setq gc-cons-threshold (* 100 1024 1024))
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq gc-cons-threshold (* 800 1024))))
 
 
-
 (menu-bar-mode -1)
+(setq inhibit-startup-screen t)
 (setq-default truncate-lines t)
 
 (setq make-backup-files nil)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f"
-     default))
- '(display-line-numbers-width-start t)
- '(package-selected-packages
-   '(auctex catppuccin-theme centaur-tabs company corfu doom-modeline
-            evil-collection evil-goggles geiser-gauche markdown-mode
-            pet rust-mode sly valign vterm)))
+ '(display-line-numbers-width-start t))
 
 
 ;; ============================================================
 ;; GUI
 ;; ============================================================
 
-(defun my/gui-setup (frame)
-  (with-selected-frame frame
-    (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :height 120)
-    (set-fontset-font nil 'japanese-jisx0208
-		      (font-spec :family "Noto Sans CJK JP"))
-    (scroll-bar-mode -1)
-    (tool-bar-mode -1)))
+(defun my/gui-setup ()
+  (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :height 120)
+  (set-fontset-font nil 'japanese-jisx0208
+		    (font-spec :family "Noto Sans CJK JP"))
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1))
 
-(add-hook 'after-make-frame-functions 'my/gui-setup)
+(add-hook 'after-make-frame-functions
+	  (lambda (frame)
+	    (with-selected-frame frame
+	      (my/gui-setup))))
+(when (display-graphic-p)
+  (my/gui-setup))
     
 
 
@@ -74,12 +68,10 @@
 (require 'package)
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
-	("nongnu" . "https://elpa.nongnue.org/nongnue/")
-	        ("elpa" . "https://elpa.gnu.org/packages/")))
+	("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
-(unless package-archive-contents (package-refresh-contents))
 (setq use-package-always-defer t)
-
+(unless package-archive-contents (package-refresh-contents))
 (when (fboundp 'native-compile-async)
   (setq native-comp-async-report-warnings-errors nil)
   (setq comp-deferred-compilation t))
@@ -301,14 +293,6 @@
   :hook ((markdown-mode . valign-mode)
          (gfm-mode . valign-mode))
   :config (setq valign-fancy-bar t))
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 
 
 
