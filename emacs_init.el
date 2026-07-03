@@ -4,10 +4,10 @@
           (lambda ()
             (setq gc-cons-threshold (* 800 1024))))
 
-
 (menu-bar-mode -1)
 (setq inhibit-startup-screen t)
 (setq-default truncate-lines t)
+
 
 (setq make-backup-files nil)
 
@@ -151,6 +151,7 @@
   :bind (("C-c v" . vterm))
   :hook (vterm-mode . (lambda () (display-line-numbers-mode -1)))
   :config
+  (evil-set-initial-state 'vterm-mode 'emacs)
   (setq explicit-shell-file-name "fish")
   (setq vterm-shell "fish")
   (setq vterm-max-scrollback 10000))
