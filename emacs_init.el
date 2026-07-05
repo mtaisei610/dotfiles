@@ -287,8 +287,12 @@
   :ensure t
   :mode ("\\.md\\'" . gfm-mode)
   :config
-  (setq markdown-hide-markup t)
-  (setq markdown-display-inline-images t))
+  (setq-default markdown-hide-markup t)
+  (setq markdown-display-inline-images t)
+  (setq markdown-fontify-code-blocks-natively t)
+  :custom
+  (markdown-header-scaling t))
+
 
 (use-package valign
   :ensure t
