@@ -127,8 +127,9 @@ _prompt_pwd() {
     local -a parts
     parts=("${(s:/:)pwd_short}")
 
+    local n=${#parts[@]}
     local i
-    for i in {1..$(( ${#parts[@]} - 1 ))}; do
+    for (( i = 1; i < n; i++ )); do
         if [[ "${parts[$i]}" == .* ]]; then
             parts[$i]="${parts[$i]:0:2}"
         else
@@ -138,6 +139,7 @@ _prompt_pwd() {
 
     print -n "${(j:/:)parts}"
 }
+
 
 PROMPT='%F{cyan}%n@%m%f %F{blue}$(_prompt_pwd)%f%F{green}${vcs_info_msg_0_}%f %# '
 
@@ -314,4 +316,6 @@ _zsh_check_deps() {
 }
 
 _zsh_check_deps
+
+cd "$HOME"
 
