@@ -48,11 +48,19 @@ if status is-interactive
         set -gx http_proxy http://po.cc.ibaraki-ct.ac.jp:3128
         set -gx https_proxy http://po.cc.ibaraki-ct.ac.jp:3128
         set -gx ftp_proxy http://po.cc.ibaraki-ct.ac.jp:3128
+
+	gsettings set org.gnome.system.proxy mode 'manual'
+	gsettings set org.gnome.system.proxy.http host 'po.cc.ibaraki-ct.ac.jp'
+	gsettings set org.gnome.system.proxy.http port 3128
+	gsettings set org.gnome.system.proxy.https host 'po.cc.ibaraki-ct.ac.jp'
+	gsettings set org.gnome.system.proxy.https port 3128
+
         echo "Proxy settings enabled."
     end
 
     function proxyoff
         set -e HTTP_PROXY HTTPS_PROXY FTP_PROXY http_proxy https_proxy ftp_proxy
+	gsettings set org.gnome.system.proxy mode 'none'
         echo "Proxy settings cleared."
     end
 
