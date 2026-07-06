@@ -12,7 +12,12 @@
 (setq make-backup-files nil)
 
 (custom-set-variables
- '(display-line-numbers-width-start t))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(display-line-numbers-width-start t)
+ '(package-selected-packages nil))
 
 
 ;; ============================================================
@@ -152,9 +157,11 @@
   :hook (vterm-mode . (lambda () (display-line-numbers-mode -1)))
   :config
   (evil-set-initial-state 'vterm-mode 'emacs)
-  (setq explicit-shell-file-name "fish")
-  (setq vterm-shell "fish")
-  (setq vterm-max-scrollback 10000))
+  (setq explicit-shell-file-name "zsh")
+  (setq vterm-shell "zsh")
+  (setq vterm-max-scrollback 10000)
+  (with-eval-after-load 'vterm
+    (define-key vterm-mode-map (kbd "<escape>") #'vterm-send-escape)))
 
 
 
@@ -314,3 +321,9 @@
   (setq corfu-auto t
         corfu-auto-delay 0.1
         corfu-auto-prefix 1))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

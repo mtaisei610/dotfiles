@@ -93,4 +93,21 @@ if status is-interactive
         end
     end
 
+    # emacs vterm: sync-current dir
+    if set -q INSIDE_EMACS; and string match -q "*,vterm*" -- $INSIDE_EMACS
+	function vterm_printf
+	    if begin; [ -n "$TMUX" ]; and string match -q -r "screen|tmux" -- $TERM; end
+		# tmux 越しの場合は passthrough させる
+		printf "\ePtmux;\e\e]%s\007\e\\" "$argv"
+	    else if string match -q "screen*" -- $TERM
+		printf "\eP\e]%s\007\e\\" "$argv"
+	    else
+		printf "\e]%s\e\\" "$argv"
+	    end
+	end
+
+	function vterm_prompt_end --on-event fish_prompt
+	    vterm_printf '51;A'(whoami)'@'(hostname)':'(pwd)
+	end
+    end   
 end

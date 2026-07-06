@@ -5,13 +5,14 @@
 ;; --- Target Config Files ---
 (define *dotfiles*
   ;; (dotfiles name . source path)
-  '(("alacritty.toml"       . ".config/alacritty/alacritty.toml")
-    ("nvim"                 . ".config/nvim")
-    ("sway_config"          . ".config/sway/config")
+  '(("emacs_init.el"        . ".emacs.d/init.el")
+    ;;("alacritty.toml"       . ".config/alacritty/alacritty.toml")
+    ;;("nvim"                 . ".config/nvim")
+    ;;("sway_config"          . ".config/sway/config")
     ("tmux.conf"            . ".tmux.conf")
     ("config.fish"          . ".config/fish/config.fish")
     ("foot.ini"             . ".config/foot/foot.ini")
-    ("emacs_init.el"        . ".emacs.d/init.el")
+    ("zshrc"        . ".zshrc")
     ("skk_user.dict"        . ".local/share/fcitx5/skk/user.dict")))
 
 
