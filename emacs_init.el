@@ -17,26 +17,40 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(display-line-numbers-width-start t)
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(auctex catppuccin-theme centaur-tabs corfu doom-modeline
+	    evil-collection evil-goggles geiser-gauche markdown-mode
+	    pet rust-mode sly valign vterm xclip)))
+
+;; ============================================================
+;; Memo 
+;; ============================================================
+
+(defun memo ()
+  "Open memo.md"
+  (interactive)
+  (find-file (expand-file-name "Documents/memo.md" "~")))
+
+(global-set-key (kbd "C-c m") #'memo)
 
 
 ;; ============================================================
 ;; GUI
 ;; ============================================================
 
-(defun my/gui-setup ()
-  (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :height 120)
-  (set-fontset-font nil 'japanese-jisx0208
-		    (font-spec :family "Noto Sans CJK JP"))
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1))
-
-(add-hook 'after-make-frame-functions
-	  (lambda (frame)
-	    (with-selected-frame frame
-	      (my/gui-setup))))
-(when (display-graphic-p)
-  (my/gui-setup))
+;; (defun my/gui-setup ()
+;;   (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :height 120)
+;;   (set-fontset-font nil 'japanese-jisx0208
+;; 		    (font-spec :family "Noto Sans CJK JP"))
+;;   (scroll-bar-mode -1)
+;;   (tool-bar-mode -1))
+;; 
+;; (add-hook 'after-make-frame-functions
+;; 	  (lambda (frame)
+;; 	    (with-selected-frame frame
+;; 	      (my/gui-setup))))
+;; (when (display-graphic-p)
+;;   (my/gui-setup))
     
 
 
@@ -62,8 +76,6 @@
 (setq fast-but-imprecise-scrolling t)
 (setq redisplay-skip-initial-frame t)
 
-(setq select-enable-clipboard t)
-(setq select-enable-primary t)
 
 
 ;; ============================================================
@@ -297,6 +309,14 @@
   (setq-default markdown-hide-markup t)
   (setq markdown-display-inline-images t)
   (setq markdown-fontify-code-blocks-natively t)
+  (defun markdown-preview-firefox ()
+      (interactive)
+      (let* ((input-file (buffer-file-name))
+          (output-file (concat "/tmp/" (file-name-base input-file) ".html")))
+      (shell-command (format "pandoc -f markdown+pipe_tables -t html %s -o %s && /usr/bin/firefox %s &" 
+                              input-file output-file output-file))
+      (message "Opening in Firefox: %s" output-file)))
+  (define-key markdown-mode-map (kbd "C-c C-c f") 'markdown-preview-firefox)
   :custom
   (markdown-header-scaling t))
 
@@ -307,6 +327,20 @@
          (gfm-mode . valign-mode))
   :config (setq valign-fancy-bar t))
 
+
+
+;; ============================================================
+;; Clipboard
+;; ============================================================
+
+(setq select-enable-clipboard t)
+(setq select-enable-primary t)
+
+(use-package xclip
+  :ensure t
+  :config
+  (setq xclip-method 'wl-copy)
+  (xclip-mode 1))
 
 
 ;; ============================================================

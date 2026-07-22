@@ -46,9 +46,23 @@ setopt INC_APPEND_HISTORY     # コマンド実行直後に履歴へ追記
 #   apt のパッケージ名補完やサブコマンド補完は、システムに入っている
 #   補完関数 (/usr/share/zsh/functions/... 等) が fpath 上にあれば
 #   compinit だけで有効になる。
+#
+#   [高速化] compinit はデフォルトだと毎回 compaudit (fpath 上の全ディレクトリの
+#   権限チェック) を行い、これが起動時間を押し上げる要因になりやすい。
+#   .zcompdump の更新から24時間以内なら -C (監査スキップ) で高速に済ませ、
+#   24時間以上経っていたら通常通りフルチェックする。
 
 autoload -Uz compinit
-compinit -d "$HOME/.zcompdump"
+
+ZCOMPDUMP="$HOME/.zcompdump"
+if [[ -n "$ZCOMPDUMP"(#qN.mh+24) ]]; then
+    # 24時間以上更新されていない (または初回) -> フルチェック
+    compinit -d "$ZCOMPDUMP"
+else
+    # 24時間以内 -> 監査をスキップして高速に読み込む
+    compinit -C -d "$ZCOMPDUMP"
+fi
+unset ZCOMPDUMP
 
 zmodload zsh/complist
 
@@ -266,16 +280,17 @@ if [[ -n "$INSIDE_EMACS" && "$INSIDE_EMACS" == *"vterm"* ]]; then
 fi
 
 # `e filename` でファイルを開く
-e() {
-    if [[ -n "$INSIDE_EMACS" && "$INSIDE_EMACS" == *"vterm"* ]]; then
-        vterm_cmd find-file "$(realpath "${1:-.}")"
-    elif command -v emacsclient &>/dev/null; then
-        emacsclient -n "${1:-.}"
-    else
-        echo "e: emacsclient が見つかりません" >&2
-        return 1
-    fi
-}
+alias e="emacsclient -nw -a ''"
+# e() {
+#     if [[ -n "$INSIDE_EMACS" && "$INSIDE_EMACS" == *"vterm"* ]]; then
+#         vterm_cmd find-file "$(realpath "${1:-.}")"
+#     elif command -v emacsclient &>/dev/null; then
+#         emacsclient -n "${1:-.}"
+#     else
+#         echo "e: emacsclient が見つかりません" >&2
+#         return 1
+#     fi
+# }
 
 
 # ---------------------------------------------------------------------------
@@ -317,5 +332,40 @@ _zsh_check_deps() {
 
 _zsh_check_deps
 
-cd "$HOME"
+# [削除] ここに以前あった `cd "$HOME"` を削除しました。
+# これがあると、起動ディレクトリを指定して zsh を開いても
+# 強制的にホームディレクトリへ移動させられてしまうため
+# (例: `cd ~/work/project && zsh` としてもホームに飛ばされる)。
+# zsh は何もしなければ起動時のカレントディレクトリをそのまま保持します。
 
+
+export NVM_DIR="$HOME/.nvm"
+
+# ---------------------------------------------------------------------------
+# NVM の遅延読み込み
+# ---------------------------------------------------------------------------
+#   [高速化] nvm.sh は内部で多数の関数定義や補完設定を行うため、
+#   素直に source すると起動時間に数百ms〜1秒近く上乗せされることが多い。
+#   nvm/node/npm/npx を「実際に使うときだけ」読み込むようにし、
+#   使わないシェルの起動を高速に保つ。
+#
+#   使い方は今まで通り (`nvm use 18`, `node -v` など) で変わらない。
+#   初回呼び出し時だけ少し待つが、2回目以降は通常通りの速度で動作する。
+
+_nvm_lazy_load() {
+    unset -f nvm node npm npx
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+
+nvm()  { _nvm_lazy_load; nvm "$@"; }
+node() { _nvm_lazy_load; node "$@"; }
+npm()  { _nvm_lazy_load; npm "$@"; }
+npx()  { _nvm_lazy_load; npx "$@"; }
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/mt/.local/bin:$PATH"
+
+# opencode
+export PATH=/home/mt/.opencode/bin:$PATH
