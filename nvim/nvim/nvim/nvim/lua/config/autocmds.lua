@@ -19,19 +19,3 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     vim.cmd("LspRestart")
   end,
 })
-
--- for Markdown
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function(args)
-    -- スペルチェックをオフ
-    vim.opt_local.spell = false
-
-    -- テキストの折り返しをオフ
-    vim.opt_local.wrap = false
-
-    -- 現在のバッファのDiagnostics（診断・警告表示）をオフ
-    -- ※ Neovim 0.10 以降の標準APIを使用
-    vim.diagnostic.enable(false, { bufnr = args.buf })
-  end,
-})
